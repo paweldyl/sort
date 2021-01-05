@@ -10,8 +10,6 @@ const App = () => {
   const [speed, setSpeed] = useState("normal");
   const [color, setColor] = useState("yellow");
   const [target, setTarget] = useState([]);
-  const [shouldBreak, setShouldBreak] = useState(false);
-  const [isRunning, setIsRunning] = useState(false);
 
   const prepareItems = (how_many) => {
     if(how_many > 50)
@@ -38,11 +36,11 @@ const App = () => {
       case "bubble":
         bubble();
         break;
-      case "quick":
-        quick();
+      case "gnome":
+        gnome();
         break;
-      case "merge":
-        mergeSort();
+      case "bogo":
+        bogo();
         break;
     }
   }
@@ -52,26 +50,18 @@ const App = () => {
   const speedValue = () => {
     switch(speed){
       case "slow":
-        return 1000;
+        return 900;
         break;
       case "normal":
-        return 500;
+        return 350;
         break;
       case "fast":
-        return 200;
+        return 75;
         break;
     }
     return 100;
   }
   const bubble = async () =>{
-    if(isRunning && shouldBreak !== true){
-      setShouldBreak(true);
-      await sleep(30000);
-    }
-    else if(shouldBreak === true)
-      return 0;
-    setIsRunning(true);
-    setShouldBreak(false);
     let itemsArray = [...items];
     let buffer;
     const howFast = speedValue();
@@ -80,8 +70,6 @@ const App = () => {
         setColor("yellow");
         setTarget([j, j+1]);
         await sleep(howFast);
-        if(shouldBreak)
-          break;
         if(itemsArray[j] > itemsArray[j+1]){
           setColor("green");
           buffer = itemsArray[j];
@@ -92,39 +80,65 @@ const App = () => {
         else
           setColor("red");
         await sleep(howFast);
-        if(shouldBreak)
-          break;
-        console.log(shouldBreak);
       }
-      if(shouldBreak)
-        break;
     }
     setTarget([]);
-    setIsRunning(false);
   }
-  const quick = () =>{
-
-  }
-  function mergeSort(array) {
-    const half = array.length / 2
-    if(array.length < 2){
-      return array 
-    }
-    const left = array.splice(0, half)
-    return merge(mergeSort(left),mergeSort(array))
-  }
-  const merge = (left, right) => {
-    let arr = []
-    while (left.length && right.length) {
-        if (left[0] < right[0]) {
-            arr.push(left.shift())  
-        } else {
-            arr.push(right.shift()) 
+  const gnome = async () => {
+    let itemsArray = [...items];
+    let buffer;
+    const howFast = speedValue();
+    for(let i = 0; i < itemsArray.length - 1; i++){
+      for(let j = 0; j <= i; j++){
+        setColor("yellow");
+        setTarget([i-j, i+1-j]);
+        await sleep(howFast);
+        if(itemsArray[i-j] > itemsArray[i+1-j]){
+          console.log(i);
+          setColor("green");
+          buffer = itemsArray[i-j];
+          itemsArray[i-j] = itemsArray[i+1-j];
+          itemsArray[i+1-j] = buffer;
+          setItems([...itemsArray]);
+          await sleep(howFast);
         }
+        else{
+          setColor("red");
+          await sleep(howFast);
+          break;
+        }
+      }
     }
-    return [ ...arr, ...left, ...right ]
+    setTarget([]);
   }
-
+  const bogo = async () => {
+    const how_many = howMany;
+    const howFast = speedValue();
+    let rand;
+    let newArray;
+    let valuesToUse;
+    let sorted;
+    do {
+      newArray = [];
+      valuesToUse = [];
+      for(let i = 0; i < how_many; i++){
+        valuesToUse.push(i);
+      }
+      for(let i = how_many; i > 0; i--){
+        // +50 to get heights from 50% of container up to 50 + how_many (which shouldnt be higher then 50)
+        rand = Math.floor(Math.random() * i);
+        newArray.push(valuesToUse[rand]+50);
+        valuesToUse.splice(rand, 1);
+      }
+      setItems([...newArray]);
+      sorted = true;
+      for(let i = 0; i < how_many - 1; i++){
+        if(newArray[i] > newArray[i+1])
+          sorted = false;
+      }
+      await sleep(howFast);
+    }while(!sorted);
+  }
   return(
     <div className = "app-container">
       <Options 

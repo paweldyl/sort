@@ -22,8 +22,8 @@ const Options = ({prepareItems, startSorting, setHowMany, setSortType, setSpeed,
 					/>
 				  	<select name="sortType" id="sortType" value = {sortType} onChange = {e => setSortType(e.target.value)}>
 				    	<option value="bubble">Bubble sort</option>
-				    	<option value="quick">Quick sort</option>
-				    	<option value="merge">Merge sort</option>
+				    	<option value="gnome">Gnome sort</option>
+				    	<option value="bogo">Bogo sort</option>
 				  	</select>
 				  	<select name="speed" id="speed" value = {speed} onChange = {e => setSpeed(e.target.value)}>
 				    	<option value="slow">Slow</option>
